@@ -1,6 +1,7 @@
 from .common import double_lined_full_renderer
 from .renderer import renderer
 from .dcl_types import Element, terminal_size
+from .text_utils import right_pad
 from time import sleep
 
 def main() -> None:
@@ -9,7 +10,7 @@ def main() -> None:
     text = "Hey!"
 
     def text_component(term_size: terminal_size, z_idx: int) -> Element:
-        return (text, (1, 1)) # closure :)
+        return (right_pad(text, term_size.columns-2), (1, 1)) # closure :)
 
     text_render = renderer([text_component])
 
@@ -19,6 +20,11 @@ def main() -> None:
     sleep(1)
 
     text = "Not hey!"
+    text_render(False)
+
+    sleep(1)
+
+    text = "..."
     text_render(False)
 
     input()
