@@ -20,7 +20,7 @@ def main() -> None:
         [double_lined_full_component]
         + [simple_box((xst * x), (yst * y)) for x in range(3) for y in range(3)]
         + [
-            (lambda ts, z, text=text, i=i, j=j: (text, (4 + (xst * i), 5 + (yst * j))))
+            (lambda ts, z, text=text, i=i, j=j: (text, (4 + (xst * i), 5 + (yst * j)))) # late binding quick fix
             for i, text in enumerate(
                 [
                     "\x1B[38;5;196mhey\n... hi\ni\nguess\x1B[0m",
