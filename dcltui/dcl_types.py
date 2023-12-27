@@ -1,6 +1,5 @@
 from typing import Callable, TypeAlias
 from os import terminal_size
-from sys import stdout
 
 Coords: TypeAlias = tuple[int, int]
 
