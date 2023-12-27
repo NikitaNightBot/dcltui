@@ -1,13 +1,9 @@
 from __future__ import annotations
 
 from typing import Callable
-from dcl_types import Component
+from .dcl_types import Component
 from os import get_terminal_size, terminal_size
 from sys import stdout
-
-
-def col_lines(size: terminal_size) -> tuple[int, int]:  # columns, lines
-    return (size.columns, size.lines)
 
 
 def write(
