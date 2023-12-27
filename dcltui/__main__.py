@@ -1,5 +1,5 @@
-from common import double_lined_full_layout
-from renderer import renderer
+from .common import double_lined_full_layout
+from .renderer import renderer
 
 def main() -> None:
     render = renderer([
