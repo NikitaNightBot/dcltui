@@ -1,12 +1,12 @@
 from typing import Callable
 from functools import wraps
-from .constants import *
 from os import terminal_size
-from .dcl_types import Element, Coords, Component, Renderer
-from .renderer import renderer
-from sys import stdout
 from time import sleep
 from pynput import keyboard
+
+from .constants import *
+from .dcl_types import Element, Coords, Component, Renderer
+from .renderer import renderer
 from .text_utils import right_pad, write
 
 

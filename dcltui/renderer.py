@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 from typing import Iterable
+from os import get_terminal_size, terminal_size
+
 from .dcl_types import Component, Renderer
 from .text_utils import write
-from os import get_terminal_size, terminal_size
 
 
 def renderer(
