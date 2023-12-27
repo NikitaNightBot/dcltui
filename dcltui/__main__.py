@@ -1,4 +1,4 @@
-from .common import double_lined_full_renderer
+from .common import double_lined_full_renderer, double_lined_full_component, double_lined_box_component
 from .renderer import renderer
 from .dcl_types import Element, terminal_size
 from .text_utils import right_pad
@@ -10,7 +10,7 @@ def main() -> None:
     text = "Hey!"
 
     def text_component(term_size: terminal_size, z_idx: int) -> Element:
-        return (right_pad(text, term_size.columns-2), (1, 1)) # closure :)
+        return (text, (6, 6)) # closure :)
 
     text_render = renderer([text_component])
 
@@ -27,6 +27,19 @@ def main() -> None:
     text = "..."
     text_render(False)
 
+    sleep(1)
+
+    box = double_lined_box_component(lambda term_size:(
+        (15, 15//2),
+        (5, 5),
+    ))
+    box_render = renderer([box])
+    box_render(False)
+
+    sleep(1)
+    full_render = renderer([double_lined_full_component, box, text_component])
+    full_render(True)
+    
     input()
 
 
