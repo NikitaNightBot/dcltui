@@ -2,12 +2,10 @@ from .common import (
     double_lined_full_component,
     double_lined_box_component,
     text_input,
-    done,
     wrap,
 )
 from .renderer import renderer
 from .dcl_types import Component
-from time import sleep
 
 
 @wrap
