@@ -79,15 +79,18 @@ def text_input(
     closure.text = ""
 
     def on_key(key: keyboard.Key | keyboard.KeyCode | None) -> None:
-        if isinstance(key, keyboard.KeyCode):
-            closure.text += key.char
-        elif key == keyboard.Key.space:
-            closure.text += " "
-        elif key == keyboard.Key.backspace:
-            closure.text = closure.text[:-1]
-        elif key == keyboard.Key.enter:
-            enter_handle(closure.text)
-            closure.text = ""
+        try:
+            if isinstance(key, keyboard.KeyCode):
+                closure.text += key.char
+            elif key == keyboard.Key.space:
+                closure.text += " "
+            elif key == keyboard.Key.backspace:
+                closure.text = closure.text[:-1]
+            elif key == keyboard.Key.enter:
+                enter_handle(closure.text)
+                closure.text = ""
+        except Exception as e:
+            ...
         write(f"{postpref}{right_pad(closure.text, length-pl)}", True)
 
     listener = keyboard.Listener(on_press=on_key)
