@@ -1,46 +1,18 @@
-from .common import double_lined_full_renderer, double_lined_full_component, double_lined_box_component
+from .common import double_lined_full_component, double_lined_box_component
 from .renderer import renderer
-from .dcl_types import Element, terminal_size
-from .text_utils import right_pad
-from time import sleep
+from .dcl_types import Component
 
 def main() -> None:
-    layout_render = double_lined_full_renderer()
+    simple_box=lambda x,y:double_lined_box_component(lambda ts:((9,9),(3+x,2+y)))
+    components: list[Component] = [double_lined_full_component] + [
+        simple_box((81*x),(9*y))
+        for x in range(3)
+        for y in range(3)
+    ]
+    render = renderer(components)
+    render(True)
 
-    text = "Hey!"
-
-    def text_component(term_size: terminal_size, z_idx: int) -> Element:
-        return (text, (6, 6)) # closure :)
-
-    text_render = renderer([text_component])
-
-    layout_render(True)
-    text_render(False)
-
-    sleep(1)
-
-    text = "Not hey!"
-    text_render(False)
-
-    sleep(1)
-
-    text = "..."
-    text_render(False)
-
-    sleep(1)
-
-    box = double_lined_box_component(lambda term_size:(
-        (15, 15//2),
-        (5, 5),
-    ))
-    box_render = renderer([box])
-    box_render(False)
-
-    sleep(1)
-    full_render = renderer([double_lined_full_component, box, text_component])
-    full_render(True)
-    
-    input()
+    input() 
 
 
 if __name__ == "__main__":
