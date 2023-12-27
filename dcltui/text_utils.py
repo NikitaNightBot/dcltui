@@ -11,5 +11,6 @@ def write(
     if flush:
         f()
 
+
 def right_pad(text: str, size: int) -> str:
-    return (text + (' '*(size-len(text))))[-size:]
+    return (text + (" " * (size - len(text))))[-size:]
