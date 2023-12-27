@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from typing import Callable
-from .dcl_types import Component
+from .dcl_types import Component, Renderer
 from os import get_terminal_size, terminal_size
 from sys import stdout
 
@@ -19,8 +19,8 @@ def write(
 
 def renderer(
     components: list[Component],
-) -> Callable[[bool], None]:
-    def closure(clear: bool = True) -> None:
+) -> Renderer:
+    def closure(clear: bool = False) -> None:
         term_size: terminal_size = get_terminal_size()
 
         if clear is True:
