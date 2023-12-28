@@ -30,7 +30,7 @@ def main() -> None:
     text_box: Callable[[str, int, int], Component] = lambda text, i, j: (
         lambda ts, z: (
             text,
-            (box_x_offset + 1 + (xst * i), boy_y_offset + 1 + (yst * j))
+            (box_x_offset + 1 + (xst * i), boy_y_offset + 1 + (yst * j)),
         )
     )
     layout_components: Iterable[Component] = (
