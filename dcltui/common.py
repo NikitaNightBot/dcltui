@@ -157,4 +157,4 @@ def resize_callback(
             if delta < delay:
                 sleep(delay - delta)
 
-    Thread(target=closure).start()
+    Thread(target=closure, daemon=True).start()
