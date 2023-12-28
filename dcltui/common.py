@@ -78,7 +78,7 @@ def double_lined_box_component(transform: Transform) -> Component:
 
 
 def text_input(
-    start_pos: Coords, prefix: str, length: int, enter_handle: Callable[[], None]
+    start_pos: Coords, prefix: str, length: int, enter_handle: Callable[[str], None]
 ) -> TextInput:
     """
     Not really a component, it will live on its own thread and render.
@@ -104,7 +104,7 @@ def text_input(
             elif key == keyboard.Key.backspace:
                 closure.text = closure.text[:-1]
             elif key == keyboard.Key.enter:
-                enter_handle()
+                enter_handle(closure.text)
                 closure.text = ""
         except Exception as e:
             ...
