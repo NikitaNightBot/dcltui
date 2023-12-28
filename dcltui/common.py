@@ -111,6 +111,10 @@ def wrap(func):
     return wrapper
 
 
+def clear() -> None:
+    write("\x1Bc", True)
+    
+
 def done():
     while True:
         sleep(600)

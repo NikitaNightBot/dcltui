@@ -12,7 +12,7 @@ from .dcl_types import Component
 @wrap
 def main() -> None:
     xst = 20
-    yst = 10
+    yst = 20
     box_x_offset = 3
     boy_y_offset = 4
     count = 3
@@ -43,7 +43,7 @@ def main() -> None:
         ]
         + [
             text_in := text_input(
-                input_pos, "Input: ", 20, lambda s: mut_render()
+                input_pos, "Penis: ", 20, lambda s: mut_render()
             )  # lazy evaluation -> can use stuff defined later
             # dont forget to add incase you re-render with clear = True to not lose the input stuff
         ]
