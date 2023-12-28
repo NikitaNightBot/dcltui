@@ -9,16 +9,21 @@ Component: TypeAlias = Callable[
     [terminal_size, int], Element  # size on render, render (z) idx
 ]
 
-Renderer: TypeAlias = Callable[[bool], None]
+
+class Renderer(Protocol):
+    def __call__(self, clear: bool = ..., /) -> None:
+        ...
+
 
 Transform: TypeAlias = Callable[
     [terminal_size], tuple[tuple[int, int], tuple[int, int]]
 ]
 
 
-class TextInput(Protocol):  # to make lsps happy
+class TextInput(
+    Protocol
+):  # to make lsps happy, essentially a Component with a text attribute
     text: str
 
-    @staticmethod
-    def __call__(ts: terminal_size, z_idx: int) -> tuple[str, Coords]:
+    def __call__(self, ts: terminal_size, z_idx: int, /) -> tuple[str, Coords]:
         ...

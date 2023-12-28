@@ -73,7 +73,7 @@ def text_input(
 
     closure: TextInput
 
-    def closure(ts: terminal_size, z_idx: int) -> tuple[str, Coords]:  #
+    def closure(ts: terminal_size, z_idx: int) -> tuple[str, Coords]:  # type: ignore[no-redef]
         return (prefix + right_pad(closure.text, length - pl), start_pos)
 
     closure.text = ""
