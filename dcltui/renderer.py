@@ -3,8 +3,14 @@ from __future__ import annotations
 from typing import Iterable
 from os import get_terminal_size, terminal_size
 
-from .dcl_types import Component, Renderer
+from .dcl_types import Component, Renderer, Coords
 from .text_utils import write
+
+
+def render(text: str, cords: Coords) -> None:
+    start_x, start_y = cords
+    for line_idx, line in enumerate(text.splitlines()):
+        write(f"\x1B[{line_idx+start_y+1};{start_x+1}H{line}")
 
 
 def renderer(
@@ -17,9 +23,8 @@ def renderer(
             write("\x1Bc")
 
         for z_idx, component in enumerate(components):
-            text, (start_x, start_y) = component(term_size, z_idx)
-            for line_idx, line in enumerate(text.splitlines()):
-                write(f"\x1B[{line_idx+start_y+1};{start_x+1}H{line}")
+            text, cords = component(term_size, z_idx)
+            render(text, cords)
 
         write(
             f"\x1B[{term_size.lines+1};{term_size.columns+1}H", True
