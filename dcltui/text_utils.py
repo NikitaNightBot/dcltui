@@ -13,5 +13,9 @@ def write(
         f()
 
 
+def left_pad(text: str, size: int) -> str:
+    return ((" " * (size - len(text))) + text)[-size:]
+
+
 def right_pad(text: str, size: int) -> str:
     return (text + (" " * (size - len(text))))[-size:]
