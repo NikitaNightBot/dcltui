@@ -31,7 +31,7 @@ def cols_lines(size: terminal_size) -> Coords:  # columns, lines
     return (size.columns, size.lines)
 
 
-def double_lined_full_component(term_size: terminal_size, z_idx: int) -> Element:
+def double_lined_full_component(term_size: terminal_size) -> Element:
     cols, lines = cols_lines(term_size)
 
     fcols = cols - 2
@@ -55,7 +55,7 @@ def double_lined_full_renderer() -> Renderer:
 
 
 def double_lined_box_component(transform: Transform) -> Component:
-    def component(term_size: terminal_size, z_idx: int) -> Element:
+    def component(term_size: terminal_size) -> Element:
         size, start_coords = transform(term_size)
         cols, lines = size
 
@@ -90,7 +90,7 @@ def text_input(
 
     closure: TextInput
 
-    def closure(ts: terminal_size, z_idx: int) -> tuple[str, Coords]:  # type: ignore[no-redef]
+    def closure(ts: terminal_size) -> tuple[str, Coords]:  # type: ignore[no-redef]
         return (prefix + right_pad(closure.text, length - pl), start_pos)
 
     closure.text = ""
@@ -161,6 +161,29 @@ def resize_callback(
                 sleep(delay - delta)
 
     Thread(target=closure, daemon=True).start()
+
+
+def text_input_with_handler(
+    input_prefix: str,
+    text_size: int,
+    input_cords: Coords,
+    text_cords: Coords,
+    handler: Callable[[str], None],
+) -> tuple[TextInput, Component, Renderer]:
+    text: str = ""
+    mut_comp: Component = lambda ts: (right_pad(text, text_size), text_cords)
+
+    def set_text(new_text: str) -> None:
+        nonlocal text
+        text = new_text
+        handler(text)
+        mut_render()
+
+    text_in = text_input(input_cords, input_prefix, text_size, set_text)
+
+    mut_render = renderer([text_in, mut_comp])
+
+    return (text_in, mut_comp, mut_render)
 
 
 def join_callbacks(callbacks: Iterable[Callable[[], None]]) -> Callable[[], None]:

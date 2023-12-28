@@ -22,8 +22,8 @@ def renderer(
         if clear is True:
             write("\x1Bc")
 
-        for z_idx, component in enumerate(components):
-            text, cords = component(term_size, z_idx)
+        for component in components:
+            text, cords = component(term_size)
             render(text, cords)
 
         write(

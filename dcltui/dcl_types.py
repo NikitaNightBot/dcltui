@@ -1,4 +1,4 @@
-from typing import Callable, Optional, TypeAlias, Protocol
+from typing import Callable, TypeAlias, Protocol
 from os import terminal_size
 
 Coords: TypeAlias = tuple[int, int]
@@ -6,7 +6,7 @@ Coords: TypeAlias = tuple[int, int]
 Element: TypeAlias = tuple[str, Coords]
 
 Component: TypeAlias = Callable[
-    [terminal_size, int], Element  # size on render, render (z) idx
+    [terminal_size], Element  # size on render, render (z) idx
 ]
 
 
@@ -25,5 +25,5 @@ class TextInput(
 ):  # to make lsps happy, essentially a Component with a text attribute
     text: str
 
-    def __call__(self, ts: terminal_size, z_idx: int, /) -> tuple[str, Coords]:
+    def __call__(self, ts: terminal_size, /) -> tuple[str, Coords]:
         ...
