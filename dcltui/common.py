@@ -133,7 +133,10 @@ def wrap(func: Callable[[], None]) -> Callable[[], None]:
             func()
             done()
         except KeyboardInterrupt:
-            write("\x1Bc", True)
+            clear()
+        except Exception as exc:
+            clear()
+            raise exc
 
     return wrapper
 
