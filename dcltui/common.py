@@ -1,4 +1,4 @@
-from typing import Callable, NoReturn
+from typing import Callable, Iterable, NoReturn
 from os import get_terminal_size, terminal_size
 from functools import wraps
 from os import terminal_size
@@ -158,3 +158,11 @@ def resize_callback(
                 sleep(delay - delta)
 
     Thread(target=closure, daemon=True).start()
+
+
+def join_callbacks(callbacks: Iterable[Callable[[], None]]) -> Callable[[], None]:
+    def closure() -> None:
+        for callback in callbacks:
+            callback()
+
+    return closure

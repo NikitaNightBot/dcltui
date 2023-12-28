@@ -5,6 +5,7 @@ from .common import (
     text_input,
     wrap,
     resize_callback,
+    join_callbacks,
 )
 from .renderer import renderer
 from .dcl_types import Component
@@ -58,7 +59,7 @@ def main() -> None:
     mut_comp: Component = lambda ts, z: (right_pad(text_in.text, 20), (50, 2))
     mut_render = renderer([mut_comp])
 
-    resize_callback(layout_render, 1 / 24, True)
+    resize_callback(join_callbacks([layout_render, mut_render]), 1 / 4, True)
 
 
 if __name__ == "__main__":
