@@ -4,7 +4,22 @@ from os import terminal_size
 from time import sleep
 from pynput import keyboard
 
-from .constants import *
+from .constants import (
+    HOME,
+    d_horizontal,
+    d_vertical,
+    d_right_vertical,
+    d_left_vertical,
+    d_down_horizontal,
+    d_up_d_horizontal,
+    d_top_left,
+    d_top_right,
+    d_bottom_left,
+    d_bottom_right,
+    d_left_d_vertical,
+    d_right_d_vertical,
+    d_down_d_horizontal,
+)
 from .dcl_types import Element, Coords, Component, Renderer, Transform, TextInput
 from .renderer import renderer
 from .text_utils import right_pad, write
