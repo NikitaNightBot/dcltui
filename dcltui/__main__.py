@@ -1,12 +1,13 @@
+from typing import Iterable, Callable
 from .common import (
     double_lined_full_component,
     double_lined_box_component,
     text_input,
     wrap,
-    right_pad,
 )
 from .renderer import renderer
 from .dcl_types import Component
+from .text_utils import right_pad
 
 
 @wrap
@@ -19,10 +20,12 @@ def main() -> None:
 
     input_pos = (3, 2)
 
-    simple_box = lambda x, y: double_lined_box_component(
+    simple_box: Callable[
+        [int, int], Component
+    ] = lambda x, y: double_lined_box_component(
         lambda ts: ((yst, yst), (box_x_offset + x, boy_y_offset + y))
     )
-    layout_components: list[Component] = (
+    layout_components: Iterable[Component] = (
         [double_lined_full_component]
         + [simple_box((xst * x), (yst * y)) for x in range(count) for y in range(count)]
         + [

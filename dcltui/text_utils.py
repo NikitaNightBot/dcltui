@@ -1,11 +1,12 @@
 from sys import stdout
+from typing import Callable
 
 
 def write(
     text: str,
     flush: bool = False,
-    w=stdout.write,
-    f=stdout.flush,  # local names faster lookup
+    w: Callable[[str], int | None] = stdout.write,
+    f: Callable[[], None] = stdout.flush,  # local names faster lookup
 ) -> None:
     w(text)
     if flush:

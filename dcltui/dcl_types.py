@@ -1,4 +1,4 @@
-from typing import Callable, TypeAlias, Protocol
+from typing import Callable, Optional, TypeAlias, Protocol
 from os import terminal_size
 
 Coords: TypeAlias = tuple[int, int]
@@ -11,9 +11,14 @@ Component: TypeAlias = Callable[
 
 Renderer: TypeAlias = Callable[[bool], None]
 
-Transform: TypeAlias = Callable[[terminal_size], tuple[tuple[int, int], tuple[int, int]]]
+Transform: TypeAlias = Callable[
+    [terminal_size], tuple[tuple[int, int], tuple[int, int]]
+]
 
-class TextInput(Protocol): # to make lsps happy
+
+class TextInput(Protocol):  # to make lsps happy
     text: str
+
     @staticmethod
-    def __call__(ts: terminal_size, z_idx: int) -> tuple[str, Coords]: ...
+    def __call__(ts: terminal_size, z_idx: int) -> tuple[str, Coords]:
+        ...

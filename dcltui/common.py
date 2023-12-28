@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Callable, NoReturn
 from functools import wraps
 from os import terminal_size
 from time import sleep
@@ -37,9 +37,7 @@ def double_lined_full_renderer() -> Renderer:
     return renderer([double_lined_full_component])
 
 
-def double_lined_box_component(
-    transform: Transform
-) -> Component:
+def double_lined_box_component(transform: Transform) -> Component:
     def component(term_size: terminal_size, z_idx: int) -> Element:
         size, start_coords = transform(term_size)
         cols, lines = size
@@ -73,14 +71,16 @@ def text_input(
     postpref = f"\x1B[{start_pos[1]+1};{start_pos[0]+1+len(prefix)}H"
     pl = len(prefix)
 
-    def closure(ts: terminal_size, z_idx: int) -> tuple[str, Coords]:
+    closure: TextInput
+
+    def closure(ts: terminal_size, z_idx: int) -> tuple[str, Coords]:  #
         return (prefix + right_pad(closure.text, length - pl), start_pos)
 
     closure.text = ""
 
     def on_key(key: keyboard.Key | keyboard.KeyCode | None) -> None:
         try:
-            if isinstance(key, keyboard.KeyCode):
+            if isinstance(key, keyboard.KeyCode) and key.char is not None:
                 closure.text += key.char
             elif key == keyboard.Key.space:
                 closure.text += " "
@@ -103,20 +103,19 @@ def clear() -> None:
     write("\x1Bc", True)
 
 
-def done():
+def done() -> NoReturn:
     while True:
         sleep(600)
 
 
-def wrap(func):
+def wrap(func: Callable[[], None]) -> Callable[[], None]:
     @wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper() -> None:
         try:
             clear()
-            func(*args, **kwargs)
+            func()
             done()
         except KeyboardInterrupt:
             write("\x1Bc", True)
 
     return wrapper
-
