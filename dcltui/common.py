@@ -113,7 +113,7 @@ def wrap(func):
 
 def clear() -> None:
     write("\x1Bc", True)
-    
+
 
 def done():
     while True:
