@@ -4,6 +4,7 @@ from .common import (
     double_lined_box_component,
     text_input,
     wrap,
+    resize_callback,
 )
 from .renderer import renderer
 from .dcl_types import Component
@@ -57,7 +58,7 @@ def main() -> None:
     mut_comp: Component = lambda ts, z: (right_pad(text_in.text, 20), (50, 2))
     mut_render = renderer([mut_comp])
 
-    layout_render()
+    resize_callback(layout_render, 1 / 24, True)
 
 
 if __name__ == "__main__":

@@ -1,7 +1,8 @@
 from typing import Callable, NoReturn
+from os import get_terminal_size, terminal_size
 from functools import wraps
 from os import terminal_size
-from time import sleep
+from time import sleep, perf_counter
 from pynput import keyboard
 
 from .constants import (
@@ -23,6 +24,7 @@ from .constants import (
 from .dcl_types import Element, Coords, Component, Renderer, Transform, TextInput
 from .renderer import renderer
 from .text_utils import right_pad, write
+from threading import Thread
 
 
 def cols_lines(size: terminal_size) -> Coords:  # columns, lines
@@ -134,3 +136,25 @@ def wrap(func: Callable[[], None]) -> Callable[[], None]:
             write("\x1Bc", True)
 
     return wrapper
+
+
+def resize_callback(
+    callback: Callable[[], None], delay: float, initial: bool = True
+) -> None:
+    if initial is True:
+        callback()
+
+    def closure():
+        ts: terminal_size = get_terminal_size()
+        while True:
+            start = perf_counter()
+            new_size = get_terminal_size()
+            if new_size != ts:
+                ts = new_size
+                clear()
+                callback()
+            delta = perf_counter() - start
+            if delta < delay:
+                sleep(delay - delta)
+
+    Thread(target=closure).start()
