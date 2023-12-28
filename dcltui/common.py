@@ -5,7 +5,7 @@ from time import sleep
 from pynput import keyboard
 
 from .constants import *
-from .dcl_types import Element, Coords, Component, Renderer
+from .dcl_types import Element, Coords, Component, Renderer, Transform
 from .renderer import renderer
 from .text_utils import right_pad, write
 
@@ -38,7 +38,7 @@ def double_lined_full_renderer() -> Renderer:
 
 
 def double_lined_box_component(
-    transform: Callable[[terminal_size], tuple[tuple[int, int], tuple[int, int]]]
+    transform: Transform
 ) -> Component:
     def component(term_size: terminal_size, z_idx: int) -> Element:
         size, start_coords = transform(term_size)
