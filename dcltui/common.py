@@ -1,7 +1,6 @@
 from typing import Callable, Iterable, NoReturn
 from os import get_terminal_size, terminal_size
 from functools import wraps
-from os import terminal_size
 from time import sleep, perf_counter
 from pynput import keyboard
 
@@ -9,22 +8,26 @@ from .constants import (
     HOME,
     d_horizontal,
     d_vertical,
-    d_right_vertical,
-    d_left_vertical,
-    d_down_horizontal,
-    d_up_d_horizontal,
     d_top_left,
     d_top_right,
     d_bottom_left,
     d_bottom_right,
-    d_left_d_vertical,
-    d_right_d_vertical,
-    d_down_d_horizontal,
 )
-from .dcl_types import Element, Coords, Component, Renderer, Transform, TextInput
+from .dcl_types import (
+    Element,
+    Coords,
+    Component,
+    Renderer,
+    Transform,
+    TextInput,
+)
 from .renderer import renderer
 from .text_utils import right_pad, write
 from threading import Thread
+
+
+def vec_add(x: Coords, y: Coords) -> Coords:
+    return (x[0] + y[0], x[1] + y[1])
 
 
 def cols_lines(size: terminal_size) -> Coords:  # columns, lines
@@ -90,7 +93,7 @@ def text_input(
 
     closure: TextInput
 
-    def closure(ts: terminal_size) -> tuple[str, Coords]:  # type: ignore[no-redef]
+    def closure(ts: terminal_size) -> Element:  # type: ignore[no-redef]
         return (prefix + right_pad(closure.text, length - pl), start_pos)
 
     closure.text = ""
@@ -106,7 +109,7 @@ def text_input(
             elif key == keyboard.Key.enter:
                 enter_handle(closure.text)
                 closure.text = ""
-        except Exception as e:
+        except Exception:
             ...
         write(f"{postpref}{right_pad(closure.text, length-pl)}", True)
 
@@ -171,7 +174,9 @@ def text_input_with_handler(
     handler: Callable[[str], None],
 ) -> tuple[TextInput, Component, Renderer]:
     text: str = ""
-    mut_comp: Component = lambda ts: (right_pad(text, text_size), text_cords)
+
+    def mut_comp(ts: terminal_size) -> Element:
+        return right_pad(text, text_size), text_cords
 
     def set_text(new_text: str) -> None:
         nonlocal text
