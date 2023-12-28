@@ -27,16 +27,17 @@ def main() -> None:
     ] = lambda x, y: double_lined_box_component(
         lambda ts: ((yst, yst), (box_x_offset + x, boy_y_offset + y))
     )
+    text_box: Callable[[str, int, int], Component] = lambda text, i, j: (
+        lambda ts, z: (
+            text,
+            (box_x_offset + 1 + (xst * i), boy_y_offset + 1 + (yst * j))
+        )
+    )
     layout_components: Iterable[Component] = (
         [double_lined_full_component]
         + [simple_box((xst * x), (yst * y)) for x in range(count) for y in range(count)]
         + [
-            (
-                lambda ts, z, text=text, i=i, j=j: (
-                    text,
-                    (box_x_offset + 1 + (xst * i), boy_y_offset + 1 + (yst * j)),
-                )
-            )  # late binding quick fix
+            text_box(text, i, j)
             for i, text in enumerate(
                 [
                     "\x1B[38;5;196mhey\n... hi\ni\nguess\x1B[0m",
@@ -50,7 +51,7 @@ def main() -> None:
             text_in := text_input(
                 input_pos, "Penis: ", 20, lambda: mut_render()
             )  # lazy evaluation -> can use stuff defined later
-            # dont forget to add incase you re-render with clear = True to not lose the input stuff
+            # dont forget to add to your render incase you re-render with clear = True to not lose the input stuff
         ]
     )
 
