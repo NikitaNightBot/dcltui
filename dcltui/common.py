@@ -5,7 +5,7 @@ from time import sleep
 from pynput import keyboard
 
 from .constants import *
-from .dcl_types import Element, Coords, Component, Renderer, Transform
+from .dcl_types import Element, Coords, Component, Renderer, Transform, TextInput
 from .renderer import renderer
 from .text_utils import right_pad, write
 
@@ -64,7 +64,7 @@ def double_lined_box_component(
 
 def text_input(
     start_pos: Coords, prefix: str, length: int, enter_handle: Callable[[str], None]
-) -> Component:
+) -> TextInput:
     """
     Not really a component, it will live on its own thread and render.
     """
@@ -99,18 +99,6 @@ def text_input(
     return closure
 
 
-def wrap(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        try:
-            func(*args, **kwargs)
-            done()
-        except KeyboardInterrupt:
-            write("\x1Bc", True)
-
-    return wrapper
-
-
 def clear() -> None:
     write("\x1Bc", True)
 
@@ -118,3 +106,17 @@ def clear() -> None:
 def done():
     while True:
         sleep(600)
+
+
+def wrap(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            clear()
+            func(*args, **kwargs)
+            done()
+        except KeyboardInterrupt:
+            write("\x1Bc", True)
+
+    return wrapper
+
