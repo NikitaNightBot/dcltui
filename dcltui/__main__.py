@@ -54,7 +54,7 @@ def main() -> None:
 
     layout_render = renderer(layout_components)
 
-    mut_comp = lambda ts, z: (right_pad(text_in.text, 20), (50, 2))
+    mut_comp: Component = lambda ts, z: (right_pad(text_in.text, 20), (50, 2))
     mut_render = renderer([mut_comp])
 
     layout_render()
