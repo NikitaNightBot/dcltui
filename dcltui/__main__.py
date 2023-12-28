@@ -46,7 +46,7 @@ def main() -> None:
         ]
         + [
             text_in := text_input(
-                input_pos, "Penis: ", 20, lambda s: mut_render()
+                input_pos, "Penis: ", 20, lambda: mut_render()
             )  # lazy evaluation -> can use stuff defined later
             # dont forget to add incase you re-render with clear = True to not lose the input stuff
         ]
