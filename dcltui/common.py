@@ -171,7 +171,7 @@ def text_input_with_handler(
     text_size: int,
     input_cords: Coords,
     text_cords: Coords,
-    handler: Callable[[str], None],
+    handler: Callable[[str], str],
 ) -> tuple[TextInput, Component, Renderer]:
     text: str = ""
 
@@ -180,8 +180,7 @@ def text_input_with_handler(
 
     def set_text(new_text: str) -> None:
         nonlocal text
-        text = new_text
-        handler(text)
+        text = handler(new_text)
         mut_render()
 
     text_in = text_input(input_cords, input_prefix, text_size, set_text)

@@ -20,7 +20,7 @@ def main() -> None:
     
 
     text_input, input_displ_comp, input_render = text_input_with_handler(
-        "Input: ", text_size, input_cords, text_cords, lambda _: None
+        "Input: ", text_size, input_cords, text_cords, lambda s: s
     )
 
     input_wrap = double_lined_box_component(
