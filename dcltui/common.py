@@ -144,7 +144,7 @@ def resize_callback(
     if initial is True:
         callback()
 
-    def closure():
+    def closure() -> NoReturn:
         ts: terminal_size = get_terminal_size()
         while True:
             start = perf_counter()
