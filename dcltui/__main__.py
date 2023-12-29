@@ -1,16 +1,18 @@
-from .common import wrap, d_box_fullscreen, resize_thread
-from .dcl_types import Renderer, Component
+from .common import wrap, d_box_fullscreen, resize_thread, text_line_component
+from .dcl_types import Renderer
 
 
 @wrap
 def main() -> None:
     text = "Hello, World!"
-    render = Renderer(
-        [
-            d_box_fullscreen(),
-            Component(lambda ts: (len(text), 1), lambda ts: (text, (1, 1))),
-        ]
-    )
+
+    # fmt: off
+    render = Renderer([
+        d_box_fullscreen(), 
+        text_line_component(text, (1, 1))
+    ])
+    # fmt: on
+
     resize_thread(render, 1 / 10, True)
 
 

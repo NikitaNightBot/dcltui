@@ -56,9 +56,7 @@ class Element:
 
     @staticmethod
     def normalize_what(
-        thing: (
-            tuple[str, tuple[int, int]] | tuple[str, Vec2] | Element | list[Element]
-        )
+        thing: (tuple[str, tuple[int, int] | Vec2] | Element | list[Element])
     ) -> list[Element]:
         if isinstance(thing, (Element, list)):
             elements = Element.normalize_list(thing)
@@ -75,7 +73,7 @@ Transform: TypeAlias = Callable[[terminal_size], (Vec2 | tuple[int, int])]
 
 Output: TypeAlias = Callable[
     [terminal_size],
-    (tuple[str, tuple[int, int]] | tuple[str, Vec2] | Element | list[Element]),
+    (tuple[str, tuple[int, int] | Vec2] | Element | list[Element]),
 ]
 
 
