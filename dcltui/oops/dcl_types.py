@@ -71,15 +71,18 @@ class Element:
 
 
 Transform: TypeAlias = (
-    Callable[[terminal_size], Vec2] | Callable[[terminal_size], tuple[int, int]]
-)
-Output: TypeAlias = (
-    Callable[[terminal_size], tuple[str, tuple[int, int]]]
-    | Callable[[terminal_size], tuple[str, Vec2]]
-    | Callable[[terminal_size], Element]
-    | Callable[[terminal_size], list[Element]]
+    Callable[[terminal_size], (Vec2 | tuple[int, int])]
 )
 
+
+Output: TypeAlias = (
+    Callable[[terminal_size], (
+        tuple[str, tuple[int, int]] |
+        tuple[str, Vec2] |
+        Element |
+        list[Element]
+    )]
+)
 
 @dataclass(slots=True, frozen=True)
 class Renderable:
