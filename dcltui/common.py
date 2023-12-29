@@ -6,7 +6,11 @@ from .constants import (
     d_bottom_left,
     d_bottom_right,
 )
-from os import terminal_size
+from threading import Thread
+from typing import NoReturn, Callable
+from .text_utils import write
+from time import sleep, perf_counter
+from os import terminal_size, get_terminal_size
 from .dcl_types import Component
 
 
@@ -26,3 +30,55 @@ def d_box_fullscreen() -> Component:
         lambda ts: (ts.columns, ts.lines),
         closure,
     )
+
+
+def clear() -> None:
+    write("\x1Bc")
+
+
+def done() -> NoReturn:
+    while True:
+        sleep(600)
+
+
+def wrap(func: Callable[[], None]) -> Callable[[], None]:
+    def closure() -> None:
+        try:
+            clear()
+            func()
+            done()
+        except KeyboardInterrupt:
+            clear()
+        except Exception as exc:
+            clear()
+            raise exc
+
+    return closure
+
+
+def resize_thread(
+    callback: Callable[[], None] | Callable[[terminal_size], None],
+    delay: float,
+    initial: bool = True,
+    wsize: bool = False,
+) -> None:
+    def closure() -> NoReturn:
+        size = get_terminal_size()
+
+        def so_sorry() -> None:
+            callback(size) if wsize else callback()  # type: ignore
+
+        if initial is True:
+            so_sorry()
+        while True:
+            start = perf_counter()
+            new_size = get_terminal_size()
+            if new_size != size:
+                size = new_size
+                clear()
+                so_sorry()
+            delta = perf_counter() - start
+            if delta < delay:
+                sleep(delay - delta)
+
+    Thread(target=closure, daemon=True).start()
