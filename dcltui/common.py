@@ -10,7 +10,7 @@ from .constants import (
 from threading import Thread
 from typing import NoReturn, Callable
 from pynput import keyboard
-from .text_utils import write, flush
+from .text_utils import write, flush, right_pad
 from time import sleep, perf_counter
 from os import terminal_size, get_terminal_size
 from .dcl_types import Component, Vec2Tup, Renderer, Vec2
@@ -56,6 +56,8 @@ class TextInput(Component):
             self.text = self.text[:-1]
         elif key == keyboard.Key.space:
             self.text += " "
+        ts = get_terminal_size()
+        #write(f"\x1B[{self.input_cords.y+1};{self.input_cords.x+1+len(self.prefix)}H{right_pad(self.text, self.size-len(self.prefix))}\x1B[{ts.lines+1};{ts.columns+1}H", True)
         self.renderer()
 
     def start(self: TextInput) -> None:

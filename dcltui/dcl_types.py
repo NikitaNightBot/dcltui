@@ -59,7 +59,7 @@ class Element:
 
     @staticmethod
     def normalize_what(
-        thing: (tuple[str, tuple[int, int] | Vec2] | Element | list[Element])
+        thing: (tuple[str, Vec2Tup] | Element | list[Element])
     ) -> list[Element]:
         if isinstance(thing, (Element, list)):
             elements = Element.normalize_list(thing)
