@@ -11,13 +11,13 @@ from typing import NoReturn, Callable
 from .text_utils import write
 from time import sleep, perf_counter
 from os import terminal_size, get_terminal_size
-from .dcl_types import Component, Vec2
+from .dcl_types import Component, Vec2Tup
 
 
-def text_line_component(text: str, coords: (tuple[int, int]) | Vec2) -> Component:
+def text_line_component(text: str, coords: Vec2Tup) -> Component:
     return Component(
-        lambda ts: (len(text), 1),
-        lambda ts: (text, coords),
+        lambda ts: (coords, (len(text), 1)),
+        lambda ts: (text, (0, 0)),
     )
 
 
@@ -34,7 +34,7 @@ def d_box_fullscreen() -> Component:
         return (f"{top}\n{mids}\n{bot}", (0, 0))
 
     return Component(
-        lambda ts: (ts.columns, ts.lines),
+        lambda ts: ((0, 0), (ts.columns, ts.lines)),
         closure,
     )
 

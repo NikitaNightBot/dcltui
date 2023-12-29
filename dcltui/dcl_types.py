@@ -38,7 +38,7 @@ class Vec2:
 @dataclass(slots=True, frozen=True)
 class Element:
     text: str
-    cords: Vec2
+    offset_cords: Vec2
 
     @staticmethod
     def normalize_element(thing: tuple[str, Vec2] | Element) -> Element:
@@ -67,8 +67,8 @@ class Element:
             elements = Element.normalize_list(element)
         return elements
 
-
-Transform: TypeAlias = Callable[[terminal_size], (Vec2 | tuple[int, int])]
+Vec2Tup: TypeAlias = Vec2 | tuple[int, int]
+Transform: TypeAlias = Callable[[terminal_size], tuple[Vec2Tup, Vec2Tup]] # start cords, size
 
 
 Output: TypeAlias = Callable[
@@ -81,20 +81,21 @@ Output: TypeAlias = Callable[
 class Renderable:
     element: Element
     size: Vec2
+    start_cords: Vec2
 
     def render(self: Renderable) -> None:
-        text, cords, s_x, s_y = (
+        text, offset_cords, s_x, s_y = (
             self.element.text,
-            self.element.cords,
+            self.element.offset_cords,
             self.size.x,
             self.size.y,
         )
-        st_x, st_y = cords.x, cords.y
+        offset_x, offset_y = offset_cords.x, offset_cords.y
         parts = wrap(text, s_x)
         parts.extend([""] * (s_y - len(parts)))
         for p_idx, part in enumerate(parts):
             padded = right_pad(part, s_x)
-            write(f"\x1B[{st_y+1+p_idx};{st_x+1}H{padded}", False)
+            write(f"\x1B[{self.start_cords.y+offset_y+1+p_idx};{self.start_cords.x+offset_x+1}H{padded}", False)
 
 
 @dataclass(slots=True)
@@ -115,9 +116,12 @@ class Component:
 
     def __call__(self: Self) -> list[Renderable]:
         ts = get_terminal_size()
-        size = Vec2.normalize(self.transform(ts))
+        start_cords, size = self.transform(ts)
+        start_cords = Vec2.normalize(start_cords)
+        size = Vec2.normalize(size)
+
         return [
-            Renderable(element, size)
+            Renderable(element, size, start_cords)
             for element in Element.normalize_what(self.output(ts))
         ]
 
