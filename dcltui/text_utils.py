@@ -2,6 +2,10 @@ from sys import stdout
 from typing import Callable
 
 
+def flush() -> None:
+    stdout.flush()
+
+
 def write(
     text: str,
     flush: bool = False,
