@@ -2,9 +2,9 @@ from sys import stdout
 from typing import Callable
 
 
-def flush():
+def flush() -> None:
     stdout.flush()
-    
+
 
 def write(
     text: str,

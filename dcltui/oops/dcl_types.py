@@ -87,10 +87,15 @@ class Renderable:
     size: Vec2
 
     def render(self: Renderable) -> None:
-        text, cords, s_x, s_y = self.element.text, self.element.cords, self.size.x, self.size.y
+        text, cords, s_x, s_y = (
+            self.element.text,
+            self.element.cords,
+            self.size.x,
+            self.size.y,
+        )
         st_x, st_y = cords.x, cords.y
         parts = wrap(text, s_x)
-        parts.extend([""]*(s_y-len(parts)))
+        parts.extend([""] * (s_y - len(parts)))
         for p_idx, part in enumerate(parts):
             padded = right_pad(part, s_x)
             write(f"\x1B[{st_y+1+p_idx};{st_x+1}H{padded}", False)
