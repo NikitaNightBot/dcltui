@@ -27,6 +27,9 @@ class Vec2:
     __sub__ = bind(int.__sub__)
     __mul__ = bind(int.__mul__)
 
+    def prod(self: Vec2) -> int:
+        return self.x * self.y
+
     @staticmethod
     def normalize(thing: tuple[int, int] | Vec2) -> Vec2:
         if isinstance(thing, tuple):
@@ -38,7 +41,7 @@ class Vec2:
 @dataclass(slots=True, frozen=True)
 class Element:
     text: str
-    offset_cords: Vec2
+    offset_cords: Vec2  # will be used as relative when in Renderable
 
     @staticmethod
     def normalize_element(thing: tuple[str, Vec2] | Element) -> Element:
@@ -67,8 +70,11 @@ class Element:
             elements = Element.normalize_list(element)
         return elements
 
+
 Vec2Tup: TypeAlias = Vec2 | tuple[int, int]
-Transform: TypeAlias = Callable[[terminal_size], tuple[Vec2Tup, Vec2Tup]] # start cords, size
+Transform: TypeAlias = Callable[
+    [terminal_size], tuple[Vec2Tup, Vec2Tup]
+]  # start cords, size
 
 
 Output: TypeAlias = Callable[
@@ -90,12 +96,19 @@ class Renderable:
             self.size.x,
             self.size.y,
         )
+        text = text[
+            : self.size.prod()
+            + text.count("\n")  # this caused so much pain in the ass i cant
+        ]
         offset_x, offset_y = offset_cords.x, offset_cords.y
         parts = wrap(text, s_x)
         parts.extend([""] * (s_y - len(parts)))
         for p_idx, part in enumerate(parts):
             padded = right_pad(part, s_x)
-            write(f"\x1B[{self.start_cords.y+offset_y+1+p_idx};{self.start_cords.x+offset_x+1}H{padded}", False)
+            write(
+                f"\x1B[{self.start_cords.y+offset_y+1+p_idx};{self.start_cords.x+offset_x+1}H{padded}",
+                False,
+            )
 
 
 @dataclass(slots=True)
@@ -104,15 +117,18 @@ class Component:
     output: Output
 
     def __or__(self: Self, new_output: Output) -> Self:
+        """
+        Mutates
+        """
+        old_output = self.output
+
         def closure(ts: terminal_size, /) -> list[Element]:
-            old = self.output(ts)
+            old = old_output(ts)
             new = new_output(ts)
             return Element.normalize_what(old) + Element.normalize_what(new)
 
-        return type(self)(
-            self.transform,
-            closure,
-        )
+        self.output = closure
+        return self
 
     def __call__(self: Self) -> list[Renderable]:
         ts = get_terminal_size()
@@ -131,7 +147,8 @@ class Renderer:
     components: list[Component]
 
     def __or__(self: Renderer, other: Renderer) -> Renderer:
-        return Renderer(self.components + other.components)
+        self.components.extend(other.components)
+        return self
 
     def __call__(self, clear: bool = False) -> None:
         if clear is True:

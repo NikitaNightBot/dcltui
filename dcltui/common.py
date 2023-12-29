@@ -1,3 +1,4 @@
+from __future__ import annotations
 from .constants import (
     d_horizontal,
     d_vertical,
@@ -8,10 +9,70 @@ from .constants import (
 )
 from threading import Thread
 from typing import NoReturn, Callable
-from .text_utils import write
+from pynput import keyboard
+from .text_utils import write, flush
 from time import sleep, perf_counter
 from os import terminal_size, get_terminal_size
-from .dcl_types import Component, Vec2Tup
+from .dcl_types import Component, Vec2Tup, Renderer, Vec2
+
+
+class TextInput(Component):
+    def __init__(
+        self: TextInput,
+        text: str,
+        size: int,
+        input_cords: Vec2Tup,
+        prefix: str,
+        handle: Callable[[str], None],
+        start: bool = False,
+    ) -> None:
+        self.text = text
+        self.size = size
+        self.input_cords = input_cords
+        self.prefix = prefix
+        self.handle = handle
+        self.renderer = Renderer([self])
+
+        def transform(ts: terminal_size) -> tuple[Vec2Tup, Vec2Tup]:
+            return (input_cords, (size, 1))
+
+        def output(ts: terminal_size) -> tuple[str, Vec2Tup]:
+            diff = self.size - len(prefix)
+            out = prefix + self.text[-diff:]
+            return (out, (0, 0))
+
+        super().__init__(transform, output)
+
+        if start is True:
+            self.start()
+
+    def on_press(self, key: keyboard.Key | keyboard.KeyCode | None) -> None:
+        if isinstance(key, keyboard.KeyCode) and isinstance(key.char, str):
+            self.text += key.char
+        elif key == keyboard.Key.enter:
+            self.handle(self.text)
+            self.text = ""
+        elif key == keyboard.Key.backspace:
+            self.text = self.text[:-1]
+        elif key == keyboard.Key.space:
+            self.text += " "
+        self.renderer()
+
+    def start(self: TextInput) -> None:
+        listener = keyboard.Listener(on_press=self.on_press)
+        listener.start()
+        self.renderer()
+        flush()
+
+
+def d_box_sized(size: Vec2Tup, coords: Vec2Tup) -> Component:
+    size = Vec2.normalize(size)
+    fc = size.x - 2
+    fl = size.y - 2
+    fh = d_horizontal * fc
+    mid = "\n".join([f"{d_vertical}{' '*fc}{d_vertical}"] * fl)
+    out = f"{d_top_left}{fh}{d_top_right}\n{mid}\n{d_bottom_left}{fh}{d_bottom_right}"
+    return Component(lambda ts: (coords, size), lambda ts: (out, (0, 0)))
 
 
 def text_line_component(text: str, coords: Vec2Tup) -> Component:
@@ -36,6 +97,44 @@ def d_box_fullscreen() -> Component:
     return Component(
         lambda ts: ((0, 0), (ts.columns, ts.lines)),
         closure,
+    )
+
+
+def d_box_input_with_text(
+    cords: Vec2Tup,
+    size: int,
+    text: str,
+    input_text: str,
+    prefix: str,
+    handler: Callable[[str], str],
+) -> Renderer:
+    cords = Vec2.normalize(cords)
+    icords = cords + Vec2(1, 3)
+    input_renderer = Renderer(
+        [Component(lambda ts: (icords, (size, 1)), lambda ts: (input_text, (0, 0)))]
+    )
+
+    def handle_enter(new: str) -> None:
+        nonlocal input_text
+        input_text = handler(new)
+        input_renderer()
+
+    return (
+        Renderer(
+            [
+                d_box_sized((size + 2, 5), cords),
+                text_line_component(text, cords + 1),
+                TextInput(
+                    input_text,
+                    size,
+                    cords + Vec2(1, 2),
+                    prefix,
+                    handle_enter,
+                    start=True,
+                ),
+            ]
+        )
+        | input_renderer
     )
 
 
