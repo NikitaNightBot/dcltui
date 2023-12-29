@@ -169,7 +169,7 @@ def resize_thread(
     delay: float,
     initial: bool = True,
     wsize: bool = False,
-) -> None:
+) -> Thread:
     def closure() -> NoReturn:
         size = get_terminal_size()
 
@@ -189,4 +189,6 @@ def resize_thread(
             if delta < delay:
                 sleep(delay - delta)
 
-    Thread(target=closure, daemon=True).start()
+    thread = Thread(target=closure, daemon=True)
+    thread.start()
+    return thread
